@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DTS Print Bridge</title>
+    <style>
+      :root {
+        --bg: #0f1115;
+        --panel: #171923;
+        --border: #262a36;
+        --text: #f2f2f5;
+        --muted: #9aa0ae;
+        --accent: #f97316;      /* orange — brand accent */
+        --accent-hover: #ea6a10;
+        --ok: #22c55e;
+        --err: #ef4444;
+      }
+      @media (prefers-color-scheme: light) {
+        :root {
+          --bg: #fafafa;
+          --panel: #ffffff;
+          --border: #e5e7eb;
+          --text: #111827;
+          --muted: #6b7280;
+        }
+      }
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0; padding: 0;
+        background: var(--bg); color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+        font-size: 14px;
+      }
+      main {
+        max-width: 460px; margin: 0 auto; padding: 24px 20px;
+      }
+      h1 { font-size: 18px; margin: 0 0 4px; }
+      p.subtitle { margin: 0 0 20px; color: var(--muted); font-size: 12px; }
+      label { display: block; font-size: 12px; color: var(--muted); margin: 12px 0 4px; }
+      input {
+        width: 100%; padding: 8px 10px;
+        background: var(--panel); color: var(--text);
+        border: 1px solid var(--border); border-radius: 6px;
+        font: inherit;
+      }
+      .row { display: flex; gap: 8px; }
+      .row input { flex: 1; }
+      button {
+        padding: 8px 14px; border-radius: 6px; border: 1px solid var(--border);
+        background: var(--panel); color: var(--text); cursor: pointer; font: inherit;
+      }
+      button.primary { background: var(--accent); border-color: var(--accent); color: white; font-weight: 600; }
+      button.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+      button:disabled { opacity: 0.5; cursor: not-allowed; }
+      .status {
+        margin: 16px 0; padding: 10px 12px; border-radius: 6px;
+        background: var(--panel); border: 1px solid var(--border);
+        display: flex; align-items: center; gap: 8px;
+      }
+      .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--muted); }
+      .dot.ok { background: var(--ok); box-shadow: 0 0 0 3px rgba(34,197,94,.2); }
+      .dot.err { background: var(--err); }
+      .log {
+        margin-top: 16px; height: 180px; overflow: auto;
+        background: var(--panel); border: 1px solid var(--border); border-radius: 6px;
+        padding: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 11px; color: var(--muted); white-space: pre-wrap;
+      }
+      .actions { display: flex; gap: 8px; margin-top: 16px; }
+      .autostart { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 12px; color: var(--muted); }
+      details summary { cursor: pointer; color: var(--muted); font-size: 12px; margin-top: 8px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>DTS Print Bridge</h1>
+      <p class="subtitle">Relays print jobs from Restaurant by Dob Tech Solutions to your local WiFi thermal printer.</p>
+
+      <label for="token">Device token</label>
+      <div class="row">
+        <input id="token" placeholder="paste token from Settings › Printers" />
+        <button id="paste">Paste</button>
+      </div>
+
+      <label for="ip">Printer IP</label>
+      <input id="ip" placeholder="192.168.1.50" />
+
+      <details>
+        <summary>Advanced</summary>
+        <label for="port">Port</label>
+        <input id="port" value="9100" />
+      </details>
+
+      <div class="autostart">
+        <input type="checkbox" id="autostart" checked />
+        <label for="autostart" style="margin:0;">Start automatically at login</label>
+      </div>
+
+      <div class="actions">
+        <button id="connect" class="primary">Connect</button>
+        <button id="disconnect" disabled>Stop</button>
+      </div>
+
+      <div class="status">
+        <span id="dot" class="dot"></span>
+        <span id="statusText">Not connected</span>
+      </div>
+
+      <div id="log" class="log"></div>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

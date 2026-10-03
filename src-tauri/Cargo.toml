@@ -1,0 +1,21 @@
+[package]
+name = "dts-print-bridge"
+version = "0.1.0"
+edition = "2021"
+description = "Desktop bridge that relays cloud print jobs to a local WiFi thermal printer."
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon"] }
+tauri-plugin-autostart = "2"
+tokio = { version = "1", features = ["full"] }
+reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+base64 = "0.22"
+dirs = "5"
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]

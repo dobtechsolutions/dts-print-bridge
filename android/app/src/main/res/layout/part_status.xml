@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" style="@style/Card">
+
+    <TextView style="@style/Heading" android:text="@string/section_status" />
+
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:text="@string/status_stopped" />
+
+    <Button
+        android:id="@+id/startStop"
+        style="@style/BigButton"
+        android:backgroundTint="@color/dts_orange"
+        android:textColor="#FFFFFF"
+        android:text="@string/start" />
+
+    <Button
+        android:id="@+id/testPrint"
+        style="@style/BigButton"
+        android:text="@string/test_print" />
+</LinearLayout>

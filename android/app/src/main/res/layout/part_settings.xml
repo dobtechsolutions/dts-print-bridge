@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout style="@style/Card">
+        <TextView style="@style/Heading" android:text="@string/section_connection" />
+        <EditText
+            android:id="@+id/token"
+            style="@style/Field"
+            android:hint="@string/token_hint"
+            android:importantForAutofill="no"
+            android:inputType="textPassword"
+            android:maxLines="1" />
+        <TextView android:id="@+id/tokenSaved" style="@style/Help" />
+    </LinearLayout>
+
+    <LinearLayout style="@style/Card">
+        <TextView style="@style/Heading" android:text="@string/section_printer" />
+
+        <RadioGroup
+            android:id="@+id/mode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <RadioButton android:id="@+id/modeLan" style="@style/Radio" android:text="@string/mode_lan" />
+            <RadioButton android:id="@+id/modeBt" style="@style/Radio" android:text="@string/mode_bluetooth" />
+            <RadioButton android:id="@+id/modeUsb" style="@style/Radio" android:text="@string/mode_usb" />
+        </RadioGroup>
+
+        <LinearLayout
+            android:id="@+id/lanSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:orientation="vertical">
+                    <TextView style="@style/Label" android:text="@string/ip_label" />
+                    <EditText
+                        android:id="@+id/ip"
+                        style="@style/Field"
+                        android:digits="0123456789."
+                        android:hint="@string/ip_hint"
+                        android:importantForAutofill="no"
+                        android:inputType="number|numberDecimal"
+                        android:maxLines="1" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                    <TextView style="@style/Label" android:text="@string/port_label" />
+                    <EditText
+                        android:id="@+id/port"
+                        style="@style/Field"
+                        android:importantForAutofill="no"
+                        android:inputType="number"
+                        android:maxLength="5"
+                        android:maxLines="1"
+                        android:text="9100" />
+                </LinearLayout>
+            </LinearLayout>
+            <TextView style="@style/Help" android:text="@string/lan_help" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView style="@style/Label" android:text="@string/bt_label" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <Spinner
+                    android:id="@+id/btDevice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="56dp" />
+                <Button
+                    android:id="@+id/btRefresh"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="56dp"
+                    android:text="@string/refresh" />
+            </LinearLayout>
+            <TextView android:id="@+id/btHelp" style="@style/Help" android:text="@string/bt_help" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/usbSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView style="@style/Label" android:text="@string/usb_label" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <Spinner
+                    android:id="@+id/usbDevice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="56dp" />
+                <Button
+                    android:id="@+id/usbRefresh"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="56dp"
+                    android:text="@string/refresh" />
+            </LinearLayout>
+            <TextView style="@style/Help" android:text="@string/usb_help" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout style="@style/Card">
+        <TextView style="@style/Heading" android:text="@string/battery_title" />
+        <TextView android:id="@+id/batteryHelp" style="@style/Help" android:text="@string/battery_help" />
+        <Button android:id="@+id/battery" style="@style/BigButton" android:text="@string/battery_button" />
+    </LinearLayout>
+</LinearLayout>

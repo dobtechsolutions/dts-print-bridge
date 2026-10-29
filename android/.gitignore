@@ -1,0 +1,11 @@
+build/
+dist/
+*.apk
+*.aab
+*.idsig
+*.dex
+*.jks
+*.keystore
+*.pass
+local.properties
+.gradle/

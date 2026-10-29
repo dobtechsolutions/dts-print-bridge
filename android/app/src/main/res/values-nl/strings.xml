@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="subtitle">Print keukenbonnen en kassabonnen van Restaurant by DOB Tech Solutions</string>
+
+    <string name="section_status">Status</string>
+    <string name="section_connection">Apparaattoken</string>
+    <string name="section_printer">Printer</string>
+    <string name="section_log">Recente gebeurtenissen</string>
+
+    <string name="token_hint">Plak het apparaattoken uit Instellingen › Printers</string>
+    <string name="token_saved">Opgeslagen token: %1$s</string>
+    <string name="token_none">Nog geen token opgeslagen</string>
+
+    <string name="mode_lan">WiFi- / netwerkprinter</string>
+    <string name="mode_bluetooth">Bluetooth-printer</string>
+    <string name="mode_usb">USB-printer</string>
+
+    <string name="ip_label">IP-adres van de printer</string>
+    <string name="ip_hint">bijv. 192.168.1.100</string>
+    <string name="port_label">Poort</string>
+    <string name="lan_help">Het IP-adres staat op de zelftestbon van de printer. Laat leeg om het IP-adres uit de webapp te gebruiken.</string>
+
+    <string name="bt_label">Gekoppelde Bluetooth-printer</string>
+    <string name="bt_help">Koppel de printer eerst via Android-instellingen › Bluetooth (pincode is vaak 0000 of 1234).</string>
+    <string name="bt_none">Geen gekoppelde apparaten gevonden</string>
+    <string name="bt_off">Bluetooth staat uit</string>
+    <string name="bt_permission_needed">Sta \"Apparaten in de buurt\" toe zodat de app de Bluetooth-printer kan gebruiken.</string>
+
+    <string name="usb_label">USB-printer</string>
+    <string name="usb_help">Sluit de printer aan met een USB-OTG-kabel en sta toegang toe als daarom wordt gevraagd.</string>
+    <string name="usb_none">Geen USB-printer aangesloten</string>
+    <string name="usb_permission_denied">USB-toegang is niet toegestaan</string>
+
+    <string name="refresh">Vernieuwen</string>
+    <string name="start">Start printen</string>
+    <string name="stop">Stoppen</string>
+    <string name="test_print">Testafdruk</string>
+    <string name="test_print_ok">Testafdruk verstuurd</string>
+    <string name="test_print_failed">Testafdruk mislukt: %1$s</string>
+    <string name="restart_to_apply">Instellingen opgeslagen. Stop en start opnieuw om ze toe te passen.</string>
+
+    <string name="battery_title">Blijf actief op de achtergrond</string>
+    <string name="battery_help">Tablets stoppen apps op de achtergrond vaak om batterij te sparen. Sta toe dat DTS Print Bridge batterijoptimalisatie negeert, zodat bestellingen blijven printen als het scherm uit is.</string>
+    <string name="battery_button">Batterijoptimalisatie uitschakelen</string>
+    <string name="battery_ok">Batterijoptimalisatie staat uit voor deze app ✓</string>
+
+    <string name="error_no_token">Plak eerst het apparaattoken.</string>
+    <string name="error_no_ip">Vul het IP-adres van de printer in.</string>
+    <string name="error_no_bt">Kies een gekoppelde Bluetooth-printer.</string>
+    <string name="error_no_usb">Sluit een USB-printer aan en kies deze.</string>
+    <string name="notifications_denied">Meldingen staan uit: printen werkt nog steeds, maar je ziet de melding \"Printen actief\" niet.</string>
+
+    <string name="status_stopped">Gestopt</string>
+    <string name="status_starting">Bezig met starten…</string>
+    <string name="status_connected">Verbonden — wacht op bonnen</string>
+    <string name="status_invalid_token">Ongeldig apparaattoken</string>
+    <string name="status_network_error">Netwerkfout</string>
+    <string name="status_server_error">Serverfout (HTTP %1$s)</string>
+    <string name="status_printer_unreachable">Printer niet bereikbaar</string>
+    <string name="status_printed">Bon %1$s geprint</string>
+
+    <string name="notification_channel">Printen</string>
+    <string name="notification_title">Printen actief</string>
+</resources>

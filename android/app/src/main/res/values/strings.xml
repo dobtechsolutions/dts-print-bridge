@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">DTS Print Bridge</string>
+    <string name="subtitle">Prints kitchen tickets and receipts from Restaurant by DOB Tech Solutions</string>
+
+    <string name="section_status">Status</string>
+    <string name="section_connection">Device token</string>
+    <string name="section_printer">Printer</string>
+    <string name="section_log">Recent events</string>
+
+    <string name="token_hint">Paste the device token from Settings › Printers</string>
+    <string name="token_saved">Saved token: %1$s</string>
+    <string name="token_none">No token saved yet</string>
+
+    <string name="mode_lan">WiFi / network printer</string>
+    <string name="mode_bluetooth">Bluetooth printer</string>
+    <string name="mode_usb">USB printer</string>
+
+    <string name="ip_label">Printer IP address</string>
+    <string name="ip_hint">e.g. 192.168.1.100</string>
+    <string name="port_label">Port</string>
+    <string name="lan_help">Find the IP on the printer\'s self-test page. Leave empty to use the IP set in the web app.</string>
+
+    <string name="bt_label">Paired Bluetooth printer</string>
+    <string name="bt_help">Pair the printer first in Android Settings › Bluetooth (PIN is often 0000 or 1234).</string>
+    <string name="bt_none">No paired devices found</string>
+    <string name="bt_off">Bluetooth is off</string>
+    <string name="bt_permission_needed">Allow \"Nearby devices\" so the app can use the Bluetooth printer.</string>
+
+    <string name="usb_label">USB printer</string>
+    <string name="usb_help">Connect the printer with a USB OTG cable and allow access when asked.</string>
+    <string name="usb_none">No USB printer connected</string>
+    <string name="usb_permission_denied">USB access was not allowed</string>
+
+    <string name="refresh">Refresh</string>
+    <string name="start">Start printing</string>
+    <string name="stop">Stop</string>
+    <string name="test_print">Test print</string>
+    <string name="test_print_ok">Test print sent</string>
+    <string name="test_print_failed">Test print failed: %1$s</string>
+    <string name="restart_to_apply">Settings saved. Stop and start again to apply them.</string>
+
+    <string name="battery_title">Keep running in the background</string>
+    <string name="battery_help">Tablets often stop apps in the background to save battery. Allow DTS Print Bridge to ignore battery optimisation so orders keep printing when the screen is off.</string>
+    <string name="battery_button">Disable battery optimisation</string>
+    <string name="battery_ok">Battery optimisation is off for this app ✓</string>
+
+    <string name="error_no_token">Paste the device token first.</string>
+    <string name="error_no_ip">Enter the printer IP address.</string>
+    <string name="error_no_bt">Choose a paired Bluetooth printer.</string>
+    <string name="error_no_usb">Connect and choose a USB printer.</string>
+    <string name="notifications_denied">Notifications are off: printing still works, but you will not see the \"Printing active\" notification.</string>
+
+    <string name="status_stopped">Stopped</string>
+    <string name="status_starting">Starting…</string>
+    <string name="status_connected">Connected — waiting for jobs</string>
+    <string name="status_invalid_token">Invalid device token</string>
+    <string name="status_network_error">Network error</string>
+    <string name="status_server_error">Server error (HTTP %1$s)</string>
+    <string name="status_printer_unreachable">Printer unreachable</string>
+    <string name="status_printed">Printed job %1$s</string>
+
+    <string name="notification_channel">Printing</string>
+    <string name="notification_title">Printing active</string>
+</resources>

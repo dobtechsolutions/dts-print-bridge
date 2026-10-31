@@ -69,6 +69,10 @@
       }
       .actions { display: flex; gap: 8px; margin-top: 16px; }
       .autostart { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 12px; color: var(--muted); }
+      .find { margin-top: 6px; }
+      .find-status { font-size: 12px; color: var(--muted); margin: 6px 0; min-height: 16px; }
+      .found { display: flex; flex-direction: column; gap: 6px; }
+      .found button { text-align: left; }
       details summary { cursor: pointer; color: var(--muted); font-size: 12px; margin-top: 8px; }
     </style>
   </head>
@@ -84,7 +88,14 @@
       </div>
 
       <label for="ip">Printer IP</label>
-      <input id="ip" placeholder="192.168.1.50" />
+      <div class="row">
+        <input id="ip" placeholder="192.168.1.50" />
+        <button id="find" class="primary">Find printers</button>
+      </div>
+      <div class="find">
+        <div id="findStatus" class="find-status">Don't know the IP? Switch the printer on and press Find printers.</div>
+        <div id="found" class="found"></div>
+      </div>
 
       <details>
         <summary>Advanced</summary>

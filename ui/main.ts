@@ -14,6 +14,9 @@ const pasteBtn = $<HTMLButtonElement>("paste");
 const dot = $<HTMLSpanElement>("dot");
 const statusText = $<HTMLSpanElement>("statusText");
 const logEl = $<HTMLDivElement>("log");
+const findBtn = $<HTMLButtonElement>("find");
+const findStatus = $<HTMLDivElement>("findStatus");
+const foundEl = $<HTMLDivElement>("found");
 
 const logLines: string[] = [];
 function log(line: string) {
@@ -91,6 +94,42 @@ disconnectBtn.addEventListener("click", async () => {
   setRunning(false);
   setStatus("idle", "Not connected");
   log("bridge stopped");
+});
+
+type FoundPrinter = { ip: string; port: number; model: string };
+
+findBtn.addEventListener("click", async () => {
+  findBtn.disabled = true;
+  foundEl.textContent = "";
+  findStatus.textContent = "Searching the network for printers… (about 10 seconds)";
+  try {
+    const res = await invoke<{ ownIp: string | null; printers: FoundPrinter[] }>("find_printers");
+    if (!res.ownIp) {
+      findStatus.textContent = "This computer isn't on a network. Connect it to the restaurant's WiFi or cable first.";
+    } else if (res.printers.length === 0) {
+      findStatus.textContent =
+        `No printers found on ${res.ownIp.replace(/\.\d+$/, ".x")}. Is the printer on and connected to the same network (cable or WiFi)?`;
+    } else {
+      findStatus.textContent = `${res.printers.length} printer(s) found. Click the one to use:`;
+      for (const p of res.printers) {
+        const b = document.createElement("button");
+        b.textContent = `${p.model || "Network printer"} — ${p.ip}`;
+        b.addEventListener("click", () => {
+          ipEl.value = p.ip;
+          portEl.value = String(p.port);
+          findStatus.textContent = `Selected ${p.model || "printer"} at ${p.ip}. Press Connect.`;
+          foundEl.textContent = "";
+          log(`printer chosen: ${p.model || "printer"} ${p.ip}:${p.port}`);
+        });
+        foundEl.appendChild(b);
+      }
+    }
+    log(`find printers: ${res.printers.length} found`);
+  } catch (e) {
+    findStatus.textContent = "Search failed: " + String(e);
+  } finally {
+    findBtn.disabled = false;
+  }
 });
 
 listen<string>("bridge-log", (evt) => log(evt.payload));

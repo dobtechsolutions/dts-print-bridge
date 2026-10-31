@@ -61,4 +61,22 @@
 
     <string name="notification_channel">Printen</string>
     <string name="notification_title">Printen actief</string>
+
+    <string name="find_button">Printers zoeken</string>
+    <string name="find_help">Zoekt tegelijk op het wifi-netwerk, via Bluetooth en via USB. Zet de printer eerst aan.</string>
+    <string name="find_or_manual">Of stel het zelf in:</string>
+    <string name="find_searching">Printers zoeken…</string>
+    <string name="find_searching_wifi">Zoeken op wifi (%1$s), Bluetooth en USB…</string>
+    <string name="find_no_wifi">Niet verbonden met wifi: alleen Bluetooth en USB worden doorzocht.</string>
+    <string name="find_network_printer">Netwerkprinter</string>
+    <string name="find_done">%1$d printer(s) gevonden. Tik op de printer die je wilt gebruiken.</string>
+    <string name="find_none">Geen printers gevonden. Staat de printer aan? Wifi-printer: zelfde wifi als deze tablet. Bluetooth: zet de printer uit en aan en zoek opnieuw. USB: controleer de kabel.</string>
+    <string name="find_row_lan">Wifi · %1$s · %2$s</string>
+    <string name="find_row_bt">Bluetooth · %1$s · gekoppeld</string>
+    <string name="find_row_bt_new">Bluetooth · %1$s · tik om te koppelen</string>
+    <string name="find_row_usb">USB · %1$s</string>
+    <string name="find_selected">Gekozen: %1$s. Tik nu op Testafdruk.</string>
+    <string name="find_pairing">Koppelen met %1$s… Vraagt Android om een pincode, vul dan 0000 in.</string>
+    <string name="find_pair_failed">Koppelen met %1$s is niet gelukt. Zet de printer uit en aan en probeer opnieuw.</string>
+    <string name="find_usb_attached">USB-printer gevonden: %1$s</string>
 </resources>

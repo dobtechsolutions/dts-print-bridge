@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- USB printer class -->
+    <!-- USB printer class (device or interface) -->
     <usb-device class="7" />
+    <!-- Receipt printer brands that use a vendor-specific class -->
+    <usb-device vendor-id="1208" />  <!-- Epson 0x04B8 -->
+    <usb-device vendor-id="1305" />  <!-- Star 0x0519 -->
+    <usb-device vendor-id="5380" />  <!-- Bixolon 0x1504 -->
+    <usb-device vendor-id="1046" />  <!-- Winbond-based POS printers 0x0416 -->
+    <usb-device vendor-id="4070" />  <!-- ICS POS printers 0x0FE6 -->
 </resources>

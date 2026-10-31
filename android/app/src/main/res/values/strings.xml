@@ -62,4 +62,22 @@
 
     <string name="notification_channel">Printing</string>
     <string name="notification_title">Printing active</string>
+
+    <string name="find_button">Find printers</string>
+    <string name="find_help">Searches the WiFi network, Bluetooth and USB at the same time. Switch the printer on first.</string>
+    <string name="find_or_manual">Or set it up by hand:</string>
+    <string name="find_searching">Searching for printers…</string>
+    <string name="find_searching_wifi">Searching WiFi (%1$s), Bluetooth and USB…</string>
+    <string name="find_no_wifi">Not on WiFi: searching Bluetooth and USB only.</string>
+    <string name="find_network_printer">Network printer</string>
+    <string name="find_done">%1$d printer(s) found. Tap the one you want to use.</string>
+    <string name="find_none">No printers found. Is the printer on? WiFi printer: same WiFi as this tablet. Bluetooth: switch the printer off and on, then search again. USB: check the cable.</string>
+    <string name="find_row_lan">WiFi · %1$s · %2$s</string>
+    <string name="find_row_bt">Bluetooth · %1$s · paired</string>
+    <string name="find_row_bt_new">Bluetooth · %1$s · tap to pair</string>
+    <string name="find_row_usb">USB · %1$s</string>
+    <string name="find_selected">Selected: %1$s. Now tap Test print.</string>
+    <string name="find_pairing">Pairing with %1$s… If Android asks for a PIN, enter 0000.</string>
+    <string name="find_pair_failed">Could not pair with %1$s. Switch the printer off and on and try again.</string>
+    <string name="find_usb_attached">USB printer detected: %1$s</string>
 </resources>

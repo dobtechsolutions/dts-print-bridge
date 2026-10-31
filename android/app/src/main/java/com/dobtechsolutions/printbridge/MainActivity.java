@@ -19,10 +19,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -44,11 +46,15 @@ public final class MainActivity extends Activity implements BridgeState.Listener
     private static final String ACTION_USB_PERMISSION = "com.dobtechsolutions.printbridge.USB_PERMISSION";
     private static final int REQ_BT = 1;
     private static final int REQ_NOTIFY = 2;
+    private static final int REQ_FIND = 3;
 
     private enum Pending { NONE, START, TEST, LIST_BT }
 
     private EditText token, ip, port;
-    private TextView tokenSaved, status, log, btHelp, batteryHelp;
+    private TextView tokenSaved, status, log, btHelp, batteryHelp, findStatus;
+    private LinearLayout findResults;
+    private Button findButton;
+    private Finder finder;
     private RadioGroup mode;
     private View lanSection, btSection, usbSection;
     private Spinner btDevice, usbDevice;
@@ -95,6 +101,16 @@ public final class MainActivity extends Activity implements BridgeState.Listener
         usbDevice = findViewById(R.id.usbDevice);
         startStop = findViewById(R.id.startStop);
         battery = findViewById(R.id.battery);
+        findStatus = findViewById(R.id.findStatus);
+        findResults = findViewById(R.id.findResults);
+        findButton = findViewById(R.id.findPrinters);
+        finder = new Finder(this);
+        findButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requestFindPermissionsThenSearch();
+            }
+        });
 
         cfg = Config.load(this);
         if (state == null) {
@@ -159,6 +175,15 @@ public final class MainActivity extends Activity implements BridgeState.Listener
         if (Build.VERSION.SDK_INT >= 33) registerReceiver(usbReceiver, f, Context.RECEIVER_NOT_EXPORTED);
         else registerReceiver(usbReceiver, f);
         usbReceiverRegistered = true;
+
+        handleUsbAttach(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleUsbAttach(intent);
     }
 
     @Override
@@ -181,6 +206,7 @@ public final class MainActivity extends Activity implements BridgeState.Listener
     @Override
     protected void onDestroy() {
         if (usbReceiverRegistered) unregisterReceiver(usbReceiver);
+        if (finder != null) finder.stop();
         super.onDestroy();
     }
 
@@ -328,6 +354,8 @@ public final class MainActivity extends Activity implements BridgeState.Listener
             notificationAsked = true;
             if (!granted) toast(getString(R.string.notifications_denied));
             runPending();
+        } else if (requestCode == REQ_FIND) {
+            startFind(); // searches what it may: WiFi and USB always, Bluetooth if allowed
         } else if (requestCode == REQ_BT) {
             if (granted) {
                 loadBluetoothDevices(false);
@@ -433,6 +461,149 @@ public final class MainActivity extends Activity implements BridgeState.Listener
         ArrayAdapter<String> a = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, labels);
         a.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         s.setAdapter(a);
+    }
+
+    // ---- find printers --------------------------------------------------------------------
+
+    private boolean granted(String perm) {
+        return checkSelfPermission(perm) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestFindPermissionsThenSearch() {
+        List<String> need = new ArrayList<>();
+        if (Build.VERSION.SDK_INT >= 31) {
+            if (!granted(Manifest.permission.BLUETOOTH_CONNECT)) need.add(Manifest.permission.BLUETOOTH_CONNECT);
+            if (!granted(Manifest.permission.BLUETOOTH_SCAN)) need.add(Manifest.permission.BLUETOOTH_SCAN);
+        } else if (!granted(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            need.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+        if (need.isEmpty()) startFind();
+        else requestPermissions(need.toArray(new String[0]), REQ_FIND);
+    }
+
+    private void startFind() {
+        boolean btAllowed = Build.VERSION.SDK_INT < 31 || granted(Manifest.permission.BLUETOOTH_CONNECT);
+        boolean scanAllowed = Build.VERSION.SDK_INT >= 31
+                ? granted(Manifest.permission.BLUETOOTH_SCAN)
+                : granted(Manifest.permission.ACCESS_FINE_LOCATION);
+        findResults.removeAllViews();
+        findStatus.setText(R.string.find_searching);
+        findButton.setEnabled(false);
+        BridgeState.log("find printers started");
+        finder.start(new Finder.Callback() {
+            @Override
+            public void onItem(Finder.Item item) {
+                addFindRow(item);
+            }
+
+            @Override
+            public void onProgress(String text) {
+                findStatus.setText(text);
+            }
+
+            @Override
+            public void onDone(int found) {
+                findButton.setEnabled(true);
+                findStatus.setText(found == 0 ? getString(R.string.find_none)
+                        : getString(R.string.find_done, found));
+                BridgeState.log("find printers done: " + found + " found");
+            }
+        }, btAllowed, scanAllowed);
+    }
+
+    private String rowLabel(Finder.Item it) {
+        if (Finder.KIND_LAN.equals(it.kind)) return getString(R.string.find_row_lan, it.name, it.ip);
+        if (Finder.KIND_BT.equals(it.kind)) return getString(R.string.find_row_bt, it.name);
+        if (Finder.KIND_BT_NEW.equals(it.kind)) return getString(R.string.find_row_bt_new, it.name);
+        return getString(R.string.find_row_usb, it.name);
+    }
+
+    private void addFindRow(final Finder.Item it) {
+        Button b = new Button(this);
+        b.setText(rowLabel(it));
+        b.setAllCaps(false);
+        b.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
+        b.setMinHeight((int) (56 * getResources().getDisplayMetrics().density));
+        b.setTextSize(17);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                choose(it);
+            }
+        });
+        findResults.addView(b, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+    }
+
+    private void choose(final Finder.Item it) {
+        finder.stop();
+        findButton.setEnabled(true);
+        if (Finder.KIND_LAN.equals(it.kind)) {
+            mode.check(R.id.modeLan);
+            ip.setText(it.ip);
+            port.setText(String.valueOf(it.port));
+            selected(it.name + " (" + it.ip + ")");
+        } else if (Finder.KIND_BT.equals(it.kind)) {
+            useBluetooth(it.btAddress, it.name);
+        } else if (Finder.KIND_BT_NEW.equals(it.kind)) {
+            findStatus.setText(getString(R.string.find_pairing, it.name));
+            finder.pair(it.btAddress, new Finder.PairCallback() {
+                @Override
+                public void onPaired(String address, String name) {
+                    BridgeState.log("paired " + name);
+                    useBluetooth(address, name);
+                }
+
+                @Override
+                public void onPairFailed(String name) {
+                    BridgeState.log("pairing failed: " + name);
+                    findStatus.setText(getString(R.string.find_pair_failed, name));
+                }
+            });
+        } else {
+            useUsb(it.usbKey, it.name);
+        }
+    }
+
+    private void useBluetooth(String address, String name) {
+        cfg.btAddress = address;
+        cfg.btName = name;
+        mode.check(R.id.modeBt);
+        loadBluetoothDevices(false);
+        selected(name);
+    }
+
+    private void useUsb(String key, String name) {
+        cfg.usbKey = key;
+        mode.check(R.id.modeUsb);
+        loadUsbDevices();
+        selected(name);
+        pending = Pending.NONE;
+        ensureUsbPermission(); // asks for access now, so Test print works straight away
+    }
+
+    private void selected(String what) {
+        boolean changed = saveFromUi();
+        String msg = getString(R.string.find_selected, what);
+        findStatus.setText(msg);
+        toast(msg);
+        BridgeState.log("printer chosen: " + what);
+        if (changed && BridgeState.isRunning()) toast(getString(R.string.restart_to_apply));
+    }
+
+    /** Opened because a USB printer was plugged in: select it straight away. */
+    private void handleUsbAttach(Intent intent) {
+        if (intent == null || !UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(intent.getAction())) return;
+        UsbDevice d = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+        if (d == null) return;
+        for (UsbDevice c : UsbPrinter.candidates(this)) {
+            if (UsbPrinter.keyOf(c).equals(UsbPrinter.keyOf(d))) {
+                String label = UsbPrinter.labelOf(d);
+                toast(getString(R.string.find_usb_attached, label));
+                useUsb(UsbPrinter.keyOf(d), label);
+                return;
+            }
+        }
     }
 
     // ---- battery --------------------------------------------------------------------------

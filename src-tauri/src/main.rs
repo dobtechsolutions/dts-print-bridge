@@ -3,6 +3,8 @@
 
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod scan;
+
 use base64::{engine::general_purpose::STANDARD as B64, Engine};
 use serde::{Deserialize, Serialize};
 use std::{path::PathBuf, sync::Arc, time::Duration};
@@ -184,6 +186,24 @@ async fn stop_bridge(state: State<'_, Arc<BridgeState>>) -> Result<(), String> {
     Ok(())
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct FindResult {
+    own_ip: Option<String>,
+    printers: Vec<scan::FoundPrinter>,
+}
+
+/// "Find printers": every receipt printer on this computer's network (port 9100).
+#[tauri::command]
+async fn find_printers() -> Result<FindResult, String> {
+    let own = scan::local_ipv4();
+    let printers = match own {
+        Some(ip) => scan::scan(scan::hosts_around(ip), 9100, 450, 64).await,
+        None => Vec::new(),
+    };
+    Ok(FindResult { own_ip: own.map(|ip| ip.to_string()), printers })
+}
+
 #[tauri::command]
 async fn bridge_running(state: State<'_, Arc<BridgeState>>) -> Result<bool, String> {
     Ok(state.handle.lock().await.is_some())
@@ -201,7 +221,8 @@ fn main() {
             save_config,
             start_bridge,
             stop_bridge,
-            bridge_running
+            bridge_running,
+            find_printers
         ])
         .setup(|app| {
             // Launched at login: start hidden.

@@ -195,6 +195,54 @@ public final class ProtocolTest {
         check("maskToken hides the middle", "dev_…hars".equals(BridgeClient.maskToken(token)));
 
         printerSocket.close();
+
+        // 11. LAN scanner: subnet maths
+        List<String> hosts = LanScanner.hostsAround("192.168.1.87", 24);
+        check("hostsAround /24 has 253 hosts", hosts.size() == 253);
+        check("hostsAround skips own ip, net and broadcast", !hosts.contains("192.168.1.87")
+                && !hosts.contains("192.168.1.0") && !hosts.contains("192.168.1.255")
+                && hosts.contains("192.168.1.1") && hosts.contains("192.168.1.254"));
+        check("hostsAround narrows /16 to /24", LanScanner.hostsAround("10.0.5.20", 16).size() == 253
+                && LanScanner.hostsAround("10.0.5.20", 16).contains("10.0.5.1"));
+        check("hostsAround rejects bad ip", LanScanner.hostsAround("abc", 24).isEmpty());
+        check("parseModel strips Epson header", "TM-m30".equals(
+                LanScanner.parseModel(new byte[]{0x5F, 'T', 'M', '-', 'm', '3', '0'})));
+
+        // 12. LAN scanner: finds an Epson-like printer (answers GS I) and a silent one
+        final ServerSocket epson = new ServerSocket(0, 50, java.net.InetAddress.getByName("127.0.0.1"));
+        final ServerSocket silent = new ServerSocket(0, 50, java.net.InetAddress.getByName("127.0.0.1"));
+        Thread et = new Thread(() -> {
+            try (Socket c = epson.accept()) {
+                byte[] q = new byte[3];
+                int n = c.getInputStream().read(q);
+                if (n == 3 && q[0] == 0x1D && q[1] == 0x49 && q[2] == 0x43) {
+                    c.getOutputStream().write(new byte[]{0x5F, 'T', 'M', '-', 'm', '3', '0', 0x00});
+                    c.getOutputStream().flush();
+                }
+                Thread.sleep(200);
+            } catch (Exception ignored) {
+            }
+        });
+        et.start();
+        Thread st = new Thread(() -> {
+            try (Socket c = silent.accept()) {
+                Thread.sleep(1200);
+            } catch (Exception ignored) {
+            }
+        });
+        st.start();
+        LanScanner.Found fe = LanScanner.probe("127.0.0.1", epson.getLocalPort(), 500);
+        check("probe finds Epson with model", fe != null && "TM-m30".equals(fe.model));
+        LanScanner.Found fs = LanScanner.probe("127.0.0.1", silent.getLocalPort(), 500);
+        check("probe finds silent printer without model", fs != null && fs.model.isEmpty());
+        int closedPort;
+        try (ServerSocket tmp = new ServerSocket(0)) {
+            closedPort = tmp.getLocalPort();
+        }
+        check("probe returns null for closed port", LanScanner.probe("127.0.0.1", closedPort, 300) == null);
+        epson.close();
+        silent.close();
+
         System.out.println();
         System.out.println(passes + " passed, " + failures + " failed");
         System.exit(failures == 0 ? 0 : 1);

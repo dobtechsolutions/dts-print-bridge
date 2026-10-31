@@ -19,6 +19,21 @@
     <LinearLayout style="@style/Card">
         <TextView style="@style/Heading" android:text="@string/section_printer" />
 
+        <Button
+            android:id="@+id/findPrinters"
+            style="@style/BigButton"
+            android:backgroundTint="@color/dts_orange"
+            android:textColor="#FFFFFF"
+            android:text="@string/find_button" />
+        <TextView android:id="@+id/findStatus" style="@style/Help" android:text="@string/find_help" />
+        <LinearLayout
+            android:id="@+id/findResults"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <TextView style="@style/Label" android:layout_marginTop="16dp" android:text="@string/find_or_manual" />
+
         <RadioGroup
             android:id="@+id/mode"
             android:layout_width="match_parent"

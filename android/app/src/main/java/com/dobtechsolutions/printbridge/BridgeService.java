@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 
+import com.dobtechsolutions.printbridge.core.AlertClient;
 import com.dobtechsolutions.printbridge.core.BridgeClient;
 
 /**
@@ -89,14 +90,25 @@ public final class BridgeService extends Service {
                         BridgeState.log(line);
                     }
                 });
+        final AlertClient alerts = cfg.orderAlarm ? new AlertClient(BridgeClient.DEFAULT_API_BASE, cfg.token) : null;
+        if (alerts == null) OrderAlarm.clear(this);
         worker = new Thread(new Runnable() {
             @Override
             public void run() {
+                int tick = 0;
                 while (!stopRequested) {
                     try {
                         client.pollOnce();
                     } catch (RuntimeException e) {
                         BridgeState.log("poll crashed: " + e);
+                    }
+                    // Order alarm: check for orders nobody accepted yet every ~4 seconds.
+                    if (alerts != null && tick++ % 2 == 0) {
+                        try {
+                            OrderAlarm.update(BridgeService.this, cfg.token, alerts.fetch());
+                        } catch (RuntimeException e) {
+                            BridgeState.log("order alarm check failed: " + e);
+                        }
                     }
                     try {
                         Thread.sleep(BridgeClient.POLL_INTERVAL_MS);
@@ -129,6 +141,7 @@ public final class BridgeService extends Service {
             BridgeState.log("bridge stopped");
         }
         Printers.closeBluetooth();
+        OrderAlarm.clear(this);
         releaseLocks();
         BridgeState.setRunning(false);
         BridgeState.setStatus(getString(R.string.status_stopped), true);

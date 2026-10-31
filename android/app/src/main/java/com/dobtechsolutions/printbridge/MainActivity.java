@@ -27,6 +27,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +55,7 @@ public final class MainActivity extends Activity implements BridgeState.Listener
     private TextView tokenSaved, status, log, btHelp, batteryHelp, findStatus;
     private LinearLayout findResults;
     private Button findButton;
+    private Switch orderAlarm;
     private Finder finder;
     private RadioGroup mode;
     private View lanSection, btSection, usbSection;
@@ -105,6 +107,23 @@ public final class MainActivity extends Activity implements BridgeState.Listener
         findResults = findViewById(R.id.findResults);
         findButton = findViewById(R.id.findPrinters);
         finder = new Finder(this);
+        orderAlarm = findViewById(R.id.orderAlarm);
+        orderAlarm.setChecked(Config.load(this).orderAlarm);
+        orderAlarm.setOnCheckedChangeListener(new android.widget.CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(android.widget.CompoundButton b, boolean on) {
+                cfg.orderAlarm = on;
+                cfg.save(MainActivity.this);
+                BridgeState.log("order alarm " + (on ? "on" : "off"));
+                if (BridgeState.isRunning()) toast(getString(R.string.restart_to_apply));
+            }
+        });
+        findViewById(R.id.testAlarm).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OrderAlarm.test(MainActivity.this);
+            }
+        });
         findButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -193,6 +212,7 @@ public final class MainActivity extends Activity implements BridgeState.Listener
         if (BridgeState.getStatus().isEmpty()) BridgeState.setStatus(getString(R.string.status_stopped), true);
         onStateChanged();
         updateBatteryUi();
+        updateFullScreenUi();
         if (Config.MODE_USB.equals(cfg.mode)) loadUsbDevices();
     }
 
@@ -257,6 +277,7 @@ public final class MainActivity extends Activity implements BridgeState.Listener
         int ui = usbDevice.getSelectedItemPosition();
         if (ui >= 0 && ui < usbDevices.size()) cfg.usbKey = usbDevices.get(ui)[0];
         cfg.autoStart = before.autoStart;
+        cfg.orderAlarm = orderAlarm == null ? before.orderAlarm : orderAlarm.isChecked();
         cfg.save(this);
         return !cfg.token.equals(before.token) || !cfg.mode.equals(before.mode) || !cfg.ip.equals(before.ip)
                 || cfg.port != before.port || !cfg.btAddress.equals(before.btAddress)
@@ -604,6 +625,31 @@ public final class MainActivity extends Activity implements BridgeState.Listener
                 return;
             }
         }
+    }
+
+    // ---- full-screen alerts (Android 14+) -------------------------------------------------
+
+    private void updateFullScreenUi() {
+        boolean missing = false;
+        if (Build.VERSION.SDK_INT >= 34) {
+            android.app.NotificationManager nm = (android.app.NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            missing = nm != null && !nm.canUseFullScreenIntent();
+        }
+        findViewById(R.id.alarmPermHelp).setVisibility(missing ? View.VISIBLE : View.GONE);
+        View b = findViewById(R.id.alarmPerm);
+        b.setVisibility(missing ? View.VISIBLE : View.GONE);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    startActivity(new Intent("android.settings.MANAGE_APP_USE_FULL_SCREEN_INTENT",
+                            Uri.parse("package:" + getPackageName())));
+                } catch (RuntimeException e) {
+                    startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.parse("package:" + getPackageName())));
+                }
+            }
+        });
     }
 
     // ---- battery --------------------------------------------------------------------------

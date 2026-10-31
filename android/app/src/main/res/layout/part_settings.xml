@@ -144,6 +144,21 @@
     </LinearLayout>
 
     <LinearLayout style="@style/Card">
+        <TextView style="@style/Heading" android:text="@string/alarm_section" />
+        <Switch
+            android:id="@+id/orderAlarm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="56dp"
+            android:textSize="18sp"
+            android:text="@string/alarm_switch" />
+        <TextView style="@style/Help" android:text="@string/alarm_help" />
+        <Button android:id="@+id/testAlarm" style="@style/BigButton" android:text="@string/alarm_test" />
+        <TextView android:id="@+id/alarmPermHelp" style="@style/Help" android:visibility="gone" android:text="@string/alarm_perm_help" />
+        <Button android:id="@+id/alarmPerm" style="@style/BigButton" android:visibility="gone" android:text="@string/alarm_perm_button" />
+    </LinearLayout>
+
+    <LinearLayout style="@style/Card">
         <TextView style="@style/Heading" android:text="@string/battery_title" />
         <TextView android:id="@+id/batteryHelp" style="@style/Help" android:text="@string/battery_help" />
         <Button android:id="@+id/battery" style="@style/BigButton" android:text="@string/battery_button" />

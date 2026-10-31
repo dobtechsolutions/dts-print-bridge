@@ -79,4 +79,27 @@
     <string name="find_pairing">Koppelen met %1$s… Vraagt Android om een pincode, vul dan 0000 in.</string>
     <string name="find_pair_failed">Koppelen met %1$s is niet gelukt. Zet de printer uit en aan en probeer opnieuw.</string>
     <string name="find_usb_attached">USB-printer gevonden: %1$s</string>
+
+    <string name="alarm_section">Bestelalarm</string>
+    <string name="alarm_switch">Bel bij elke nieuwe bestelling tot hij is geaccepteerd</string>
+    <string name="alarm_help">De tablet gaat aan, belt op alarmvolume en trilt tot iemand hier op Accepteren tikt of de bestelling op een ander scherm accepteert. Herstart het printen na een wijziging.</string>
+    <string name="alarm_test">Alarmgeluid testen</string>
+    <string name="alarm_channel">Nieuwe bestellingen</string>
+    <string name="alarm_title_one">Nieuwe bestelling</string>
+    <string name="alarm_one">Nieuwe bestelling #%1$s</string>
+    <string name="alarm_many">%1$d nieuwe bestellingen</string>
+    <string name="alarm_accept">Accepteren</string>
+    <string name="alarm_accepting">Accepteren…</string>
+    <string name="alarm_accept_failed">Accepteren lukte niet: controleer de internetverbinding en probeer opnieuw.</string>
+    <string name="alarm_mute">1 minuut stil</string>
+    <string name="alarm_muted">1 minuut stil. Een nieuwe bestelling gaat meteen weer af.</string>
+    <string name="alarm_notes">Opmerking: %1$s</string>
+    <string name="alarm_type_dine_in">Hier eten</string>
+    <string name="alarm_type_table">Tafel %1$s</string>
+    <string name="alarm_type_takeaway">Afhalen</string>
+    <string name="alarm_type_delivery">Bezorgen</string>
+    <string name="alarm_type_kiosk">Kiosk</string>
+
+    <string name="alarm_perm_help">Sta meldingen op volledig scherm toe, zodat een nieuwe bestelling het scherm aanzet, ook als de tablet vergrendeld is.</string>
+    <string name="alarm_perm_button">Volledig scherm toestaan</string>
 </resources>

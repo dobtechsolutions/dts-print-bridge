@@ -21,6 +21,8 @@ public final class Config {
     public String usbKey = "";
     /** True after the user pressed Start, false after Stop. Used to restart on boot. */
     public boolean autoStart = false;
+    /** Ring loudly and wake the screen for every new order until someone accepts it. */
+    public boolean orderAlarm = true;
 
     public boolean hasToken() {
         return token != null && !token.trim().isEmpty();
@@ -37,6 +39,7 @@ public final class Config {
         c.btName = p.getString("btName", "");
         c.usbKey = p.getString("usbKey", "");
         c.autoStart = p.getBoolean("autoStart", false);
+        c.orderAlarm = p.getBoolean("orderAlarm", true);
         return c;
     }
 
@@ -50,6 +53,7 @@ public final class Config {
                 .putString("btName", btName)
                 .putString("usbKey", usbKey)
                 .putBoolean("autoStart", autoStart)
+                .putBoolean("orderAlarm", orderAlarm)
                 .apply();
     }
 

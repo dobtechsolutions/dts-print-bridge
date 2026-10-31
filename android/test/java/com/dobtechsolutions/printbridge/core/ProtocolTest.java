@@ -243,6 +243,54 @@ public final class ProtocolTest {
         epson.close();
         silent.close();
 
+        // 13. order alarm protocol
+        final List<String> alertCalls = Collections.synchronizedList(new ArrayList<String>());
+        final AtomicReference<String> alertBody = new AtomicReference<>(
+                "{\"currency\":\"EUR\",\"orders\":[{\"id\":\"o1\",\"number\":\"ORD-7\",\"type\":\"takeaway\","
+                        + "\"table\":\"\",\"total\":26.45,\"customer\":\"Sam\",\"notes\":\"\",\"items\":\"2x Pad Thai\","
+                        + "\"createdAt\":\"2026-10-31T17:00:00Z\",\"scheduledFor\":\"\"},{\"number\":\"no id\"}]}");
+        HttpServer alertServer = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        alertServer.createContext("/alerts", ex -> {
+            String q = ex.getRequestURI().getRawQuery();
+            byte[] resp;
+            int status;
+            if ("GET".equals(ex.getRequestMethod())) {
+                alertCalls.add("GET " + q);
+                resp = alertBody.get().getBytes(StandardCharsets.UTF_8);
+                status = q != null && q.contains("token=tok%20en") && q.endsWith("&alerts=1") ? 200 : 401;
+            } else {
+                ByteArrayOutputStream b = new ByteArrayOutputStream();
+                InputStream in = ex.getRequestBody();
+                byte[] buf = new byte[1024];
+                int n;
+                while ((n = in.read(buf)) != -1) b.write(buf, 0, n);
+                alertCalls.add("POST " + new String(b.toByteArray(), StandardCharsets.UTF_8));
+                resp = "{\"ok\":true,\"accepted\":true}".getBytes(StandardCharsets.UTF_8);
+                status = 200;
+            }
+            ex.sendResponseHeaders(status, resp.length);
+            OutputStream os = ex.getResponseBody();
+            os.write(resp);
+            os.close();
+        });
+        alertServer.start();
+        String alertBase = "http://127.0.0.1:" + alertServer.getAddress().getPort() + "/alerts";
+        AlertClient ac = new AlertClient(alertBase, " tok en ");
+        List<AlertClient.Order> pending = ac.fetch();
+        check("alerts: fetch parses orders and skips ones without id", pending != null && pending.size() == 1
+                && "o1".equals(pending.get(0).id) && "ORD-7".equals(pending.get(0).number)
+                && "takeaway".equals(pending.get(0).type) && Math.abs(pending.get(0).total - 26.45) < 0.001
+                && "2x Pad Thai".equals(pending.get(0).items) && "EUR".equals(pending.get(0).currency));
+        check("alerts: accept posts token, action and order id", ac.accept("o1")
+                && alertCalls.get(alertCalls.size() - 1).equals(
+                        "POST {\"token\":\"tok en\",\"action\":\"accept\",\"orderId\":\"o1\"}"));
+        alertBody.set("not json");
+        check("alerts: bad body returns null (keeps ringing state)", ac.fetch() == null);
+        check("alerts: wrong token returns null", new AlertClient(alertBase, "other").fetch() == null);
+        alertServer.stop(0);
+        check("alerts: unreachable server returns null and accept false",
+                ac.fetch() == null && !ac.accept("o1"));
+
         System.out.println();
         System.out.println(passes + " passed, " + failures + " failed");
         System.exit(failures == 0 ? 0 : 1);

@@ -80,4 +80,27 @@
     <string name="find_pairing">Pairing with %1$s… If Android asks for a PIN, enter 0000.</string>
     <string name="find_pair_failed">Could not pair with %1$s. Switch the printer off and on and try again.</string>
     <string name="find_usb_attached">USB printer detected: %1$s</string>
+
+    <string name="alarm_section">Order alarm</string>
+    <string name="alarm_switch">Ring for every new order until it is accepted</string>
+    <string name="alarm_help">The tablet wakes up, rings at alarm volume and vibrates until someone taps Accept here or accepts the order on another screen. Restart printing after changing this.</string>
+    <string name="alarm_test">Test the alarm sound</string>
+    <string name="alarm_channel">New orders</string>
+    <string name="alarm_title_one">New order</string>
+    <string name="alarm_one">New order #%1$s</string>
+    <string name="alarm_many">%1$d new orders</string>
+    <string name="alarm_accept">Accept</string>
+    <string name="alarm_accepting">Accepting…</string>
+    <string name="alarm_accept_failed">Could not accept: check the internet connection and try again.</string>
+    <string name="alarm_mute">Mute for 1 minute</string>
+    <string name="alarm_muted">Muted for 1 minute. A new order rings straight away.</string>
+    <string name="alarm_notes">Note: %1$s</string>
+    <string name="alarm_type_dine_in">Dine in</string>
+    <string name="alarm_type_table">Table %1$s</string>
+    <string name="alarm_type_takeaway">Takeaway</string>
+    <string name="alarm_type_delivery">Delivery</string>
+    <string name="alarm_type_kiosk">Kiosk</string>
+
+    <string name="alarm_perm_help">Allow full-screen alerts, so a new order turns the screen on even when the tablet is locked.</string>
+    <string name="alarm_perm_button">Allow full-screen alerts</string>
 </resources>

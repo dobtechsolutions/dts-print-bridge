@@ -71,8 +71,8 @@ connectBtn.addEventListener("click", async () => {
   const token = tokenEl.value.trim();
   const printerIp = ipEl.value.trim();
   const printerPort = parseInt(portEl.value || "9100", 10);
-  if (!token || !printerIp) {
-    setStatus("err", "Token and printer IP are required");
+  if (!token) {
+    setStatus("err", "Paste the device token first");
     return;
   }
   try {

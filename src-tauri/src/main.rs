@@ -112,7 +112,14 @@ async fn poll_once(client: &reqwest::Client, cfg: &Config, app: &AppHandle) {
         }
     };
     let short = &job.job_id[..job.job_id.len().min(8)];
-    log(app, format!("job {short} → {}:{}", job.printer_address, job.printer_port));
+    // The printer chosen in this app (e.g. via Find printers) wins over the IP stored in
+    // the web app, so a changed printer IP only needs fixing in one place.
+    let (host, port) = if !cfg.printer_ip.trim().is_empty() {
+        (cfg.printer_ip.trim().to_string(), if cfg.printer_port > 0 { cfg.printer_port } else { 9100 })
+    } else {
+        (job.printer_address.clone(), job.printer_port)
+    };
+    log(app, format!("job {short} → {host}:{port}"));
 
     let bytes = match B64.decode(&job.payload_base64) {
         Ok(b) => b,
@@ -122,7 +129,7 @@ async fn poll_once(client: &reqwest::Client, cfg: &Config, app: &AppHandle) {
         }
     };
 
-    let result = match send_to_printer(&job.printer_address, job.printer_port, &bytes).await {
+    let result = match send_to_printer(&host, port, &bytes).await {
         Ok(()) => {
             log(app, format!("job {short} printed"));
             200

@@ -56,8 +56,10 @@ struct BridgeState {
 #[serde(rename_all = "camelCase")]
 struct Job {
     job_id: String,
-    printer_address: String,
-    printer_port: u16,
+    #[serde(default)]
+    printer_address: Option<String>,
+    #[serde(default)]
+    printer_port: Option<u16>,
     payload_base64: String,
 }
 
@@ -117,7 +119,19 @@ async fn poll_once(client: &reqwest::Client, cfg: &Config, app: &AppHandle) {
     let (host, port) = if !cfg.printer_ip.trim().is_empty() {
         (cfg.printer_ip.trim().to_string(), if cfg.printer_port > 0 { cfg.printer_port } else { 9100 })
     } else {
-        (job.printer_address.clone(), job.printer_port)
+        match job.printer_address.as_deref().map(str::trim).filter(|a| !a.is_empty()) {
+            Some(a) => (a.to_string(), job.printer_port.unwrap_or(9100)),
+            None => {
+                log(app, "no printer IP: press Find printers in this app".to_string());
+                status(app, false, "No printer chosen — press Find printers");
+                let _ = client
+                    .post(API_BASE)
+                    .json(&serde_json::json!({ "token": cfg.token, "jobId": job.job_id, "code": 500 }))
+                    .send()
+                    .await;
+                return;
+            }
+        }
     };
     log(app, format!("job {short} → {host}:{port}"));
 
